@@ -1635,6 +1635,7 @@ class ugg:
             self.standarize_sm()
         elif coef == BARENUCL_HAM:
             self.standarize_sm()
+        
 
     def sort_indices(self):
         """Sorts all indices alphabetically
@@ -1907,6 +1908,21 @@ class ugg:
                 # print(pairs)
                 self.coefficient_idx[i] = [pairs[0][0], pairs[1][0], pairs[0][1], pairs[1][1]]
 
+
+    def standarize_gs_4fold(self):
+        for i in range(len(self.coefficient)):
+            if self.coefficient[i] == TWOEL_INT_DIRAC_SPINRES:
+                p, q, r, s = self.coefficient_idx[i]  
+
+                cands = [
+                    (p, q, r, s),
+                    (q, p, s, r), 
+                    (r, s, p, q), 
+                    (s, r, q, p) 
+                ]
+
+                self.coefficient_idx[i] = list(max(cands))  # albo max(cands), jeśli chcesz "największy"                
+
                 
     def standarize_f(self):        
 #        print('standf', self)
@@ -2026,6 +2042,20 @@ class ugg:
                 pairs.sort()
                 self.coefficient_idx[i] = pairs[0] + pairs[1]
 
+    def standarize_coul_4fold(self):
+        # print(self)
+        for i in range(0, len(self.coefficient)):
+            if self.coefficient[i] == TWOEL_INT_SPINRES or self.coefficient[i] == TWOEL_INT_SPINRES_AAAA or \
+               self.coefficient[i] == TWOEL_INT_SPINRES_BBBB or self.coefficient[i] == TWOEL_INT_SPINRES_ABAB:
+                p, q, r, s = self.coefficient_idx[i]
+                cands = [
+                    (p, q, r, s),
+                    (r, s, p, q), 
+                    (q, p, s, r), 
+                    (s, r, q, p) 
+                ]
+
+                self.coefficient_idx[i] = list(max(cands))  
 
     def standarize_g_for_fortran(self):
         for i in range(0, len(self.coefficient)):
@@ -2798,7 +2828,9 @@ class ugg:
         # Create dictionary of differend values for different
         # coefficients
         #
-        # print('self przed standarize', cas, self)
+        print()
+        print('cas', cas)
+        print('self0', self)
         # t0 = time.time()
         self.clear_fixed()
         self.establish_fixed()
@@ -2814,7 +2846,7 @@ class ugg:
         # print()
         # print('two time standarize,', t2-t1)
         # print()
-
+        print('self1', self)
         # t1 = time.time()
         self.sort_coeffs(last_idx, cas)
         # t2 = time.time()
@@ -2830,6 +2862,7 @@ class ugg:
         # print()
         # t1 = time.time()
         self.sort_indices()
+        print('self2', self)
         # t2 = time.time()
         # print()
         # print('sort indices time standarize,', t2-t1)
@@ -2837,6 +2870,7 @@ class ugg:
 #        print('przed refine', self, self.orbital_type)
         # t1 = time.time()
         self.refine_summation(last_idx, cas, drag_fixed)
+        print('self3', self)
 #        print('po refine', self, self.orbital_type)
         # t2 = time.time()
         # print()
@@ -2891,9 +2925,11 @@ class ugg:
         self.standarize_rl()
         self.standarize_g()
         self.standarize_gs()
- #       print('przed gm2', self)
+        self.standarize_gs_4fold()
+        self.standarize_coul_4fold()
+        print('przed gm2', self)
         self.standarize_gm2()
-  #      print('po gm2', self)
+        print('po gm2', self)
         self.standarize_gm34()
     #    print('po gm34', self)
 #        self.standarize_gm34spin()
@@ -2909,7 +2945,7 @@ class ugg:
         # t2 = time.time()
         # print()
         #print('WHOLE time standarize,', t2-t0)
-     #   print('po standarize', self)
+        print('po standarize', self)
       #  print()
         # print()
 
@@ -3654,8 +3690,8 @@ class ugg:
 
         s_old = deepcopy(summation_old)
         self.multisubst(summation_old, summation_new)
-        print('summation_old', summation_old)
-        print('summation_new', summation_new)
+#        print('summation_old', summation_old)
+#        print('summation_new', summation_new)
 
 
         temp_values = {}
@@ -4062,9 +4098,13 @@ class ugg:
                     coef = "t"
                 elif (self.coefficient[x] == CC_TAU):
                     coef = "\tau"
-                elif self.coefficient[x] == TWOEL_INT:
+                elif self.coefficient[x] == TWOEL_INT or self.coefficient[x] == TWOEL_INT_SPINRES or \
+                     self.coefficient[x] == TWOEL_INT_SPINRES_AAAA or self.coefficient[x] == TWOEL_INT_SPINRES_BBBB or\
+                     self.coefficient[x] == TWOEL_INT_SPINRES_ABAB:
                     coef = ""
-                elif self.coefficient[x] == TWOEL_INT_DIRAC or self.coefficient[x] == TWOEL_INT_DIRAC_A:
+                elif self.coefficient[x] == TWOEL_INT_DIRAC or self.coefficient[x] == TWOEL_INT_DIRAC_A or \
+                     self.coefficient[x] == TWOEL_INT_DIRAC_SPINRES_AAAA or self.coefficient[x] == TWOEL_INT_DIRAC_SPINRES_BBBB or \
+                     self.coefficient[x] == TWOEL_INT_DIRAC_SPINRES_ABAB:                     
                     coef = ""
                 elif self.coefficient[x] == DENS1:
                     coef = "\gamma"
@@ -4104,13 +4144,13 @@ class ugg:
                     #coef = "\Gamma^{----}"
                     coef = "\Gamma^{\\fourmin}"
                 elif self.coefficient[x] == DENS2PM:
-                    coef = "\Gamma^{\\plusmin}"
+                    coef = "\Gamma^{\\plusmin }"
                     #coef = "\Gamma^{+-+-}"
                     #coef = "\Gamma"
                     #coef = "\Gamma^{\\alpha\\beta\\alpha\\beta}"
                 elif self.coefficient[x] == DENS2MP:
                     coef = "\Gamma^{-+-+}"
-                    coef = "\Gamma^{\\minplus}"
+                    coef = "\Gamma^{\\minplus }"
                     #coef = "\Gamma^{\\beta\\alpha\\beta\\alpha}"
                 elif 'l' in self.coefficient[x]:
                     lenl = 0
@@ -4156,8 +4196,22 @@ class ugg:
 
                 if self.coefficient[x] == TWOEL_INT:
                     cidx = cidx + str(coef)+ "("+temp[0:2]+"|"+temp[2:4]+")"
+                elif self.coefficient[x] == TWOEL_INT_SPINRES:
+                    cidx = cidx + str(coef)+ "("+temp[0:2]+"|"+temp[2:4]+")"
+                elif self.coefficient[x] == TWOEL_INT_SPINRES_AAAA:
+                    cidx = cidx + str(coef)+ "("+temp[0:2]+"|"+temp[2:4]+")_A"
+                elif self.coefficient[x] == TWOEL_INT_SPINRES_BBBB:
+                    cidx = cidx + str(coef)+ "("+temp[0:2]+"|"+temp[2:4]+")_B"
+                elif self.coefficient[x] == TWOEL_INT_SPINRES_ABAB:
+                    cidx = cidx + str(coef)+ "("+temp[0:2]+"|"+temp[2:4]+")_{AB}"                                        
                 elif self.coefficient[x] == TWOEL_INT_DIRAC:
                     cidx = cidx + str(coef)+ "<"+temp[0:2]+"|"+temp[2:4]+">"
+                elif self.coefficient[x] == TWOEL_INT_DIRAC_SPINRES_AAAA:
+                    cidx = cidx + str(coef)+ "<"+temp[0:2]+"|"+temp[2:4]+">_A"
+                elif self.coefficient[x] == TWOEL_INT_DIRAC_SPINRES_BBBB:
+                    cidx = cidx + str(coef)+ "<"+temp[0:2]+"|"+temp[2:4]+">_B"
+                elif self.coefficient[x] == TWOEL_INT_DIRAC_SPINRES_ABAB:
+                    cidx = cidx + str(coef)+ "<"+temp[0:2]+"|"+temp[2:4]+">_{AB}"
                 elif self.coefficient[x] == TWOEL_INT_DIRAC_A:
                     cidx = cidx + str(coef)+ "<"+temp[0:2]+"||"+temp[2:4]+">"      
                 else:

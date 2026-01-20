@@ -55,8 +55,9 @@ from templates_factor import *
 import sys
 import time
 import pickle
-from paldus_male_testy import *
+#from paldus_male_testy import *
 from paldus_torun import Tlatex_read
+from paldus_polaritonic import polarit_test
 
 
 EPSILON = 10**(-14) 
@@ -213,7 +214,7 @@ EPSILON = 10**(-14)
 #execute_cisd_rowe_triplet(2, 2, True, 1, -0.5)
 # TDA_pphh_ph_onedet(22, 1, "rdm4.dat", True)
 
-#pp_rpa()
+#pp_rpa(diagonal=True)
 #hh_rpa_koopmans()
 
 #pp_rpa_hf_det()
@@ -224,11 +225,12 @@ EPSILON = 10**(-14)
 # for x in r:
 #     print(x)
 # sys.exit(0)     
-ph_rpa_plus_doubles('dump', cis='ph')
+#ph_rpa_plus_doubles('dump', cis='ph')
 #ph_rpa_plus_doubles('dump2')
 #ph_rpa_plus_doubles('load')
 #ph_rpa_plus_doubles_overlap()
-#ph_rpa(cis = False)
+#ph_rpa(cis = False, spinres=True)
+polarit_test()
 
 # test_rpa()
 sys.exit(0)

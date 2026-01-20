@@ -2095,7 +2095,7 @@ def twoel():
 
     sys.exit(0)
 
-def pp_rpa():
+def pp_rpa(diagonal=True):
     
 
     # -------------------------------------------------------------------------------------------------------
@@ -2128,7 +2128,7 @@ def pp_rpa():
 
     # KL = <0|[[rs, H], q+p+]|0>
 
-    #    KL = evaluate(AArs_aa, AAqp_pp)
+#    KL = evaluate(AArs_aa, AAqp_pp)
 #    KL = evaluate(AArs_aa, AApq_pp)
     #    KL = evaluate(AAsr_aa, AApq_pp)
 
@@ -2267,6 +2267,20 @@ def pp_rpa():
     spin_dict2['q'] = '+'
     numf2 = -1.0
 
+    spin_dict1b={}
+    spin_dict1b['r'] = '-'
+    spin_dict1b['s'] = '+'
+    spin_dict1b['p'] = '-'
+    spin_dict1b['q'] = '+'
+    numf1 = 1.0
+
+    spin_dict2b={}
+    spin_dict2b['r'] = '-'
+    spin_dict2b['s'] = '+'
+    spin_dict2b['p'] = '+'
+    spin_dict2b['q'] = '-'
+    numf2 = -1.0
+
 
     spin_dict3={}
     spin_dict3['r'] = '+'
@@ -2281,11 +2295,25 @@ def pp_rpa():
     spin_dict4['q'] = '-'
 
 
-    res2 = deepcopy(res)
-    res3_abab = add_spin_driver(spin_dict1, numf1, res)
+
+
+
+
+#    res2 = deepcopy(res)
+    # res3_abab = add_spin_driver(spin_dict1, numf1, res)
     # rsimp = res3_abab
-    res3_abba = add_spin_driver(spin_dict2, numf2, res2)
-    rsimp = res3_abab + res3_abba
+   
+#    res3_abba = add_spin_driver(spin_dict2, numf1, res2)
+#    rsimp = res3_abba
+    
+    # rsimp = res3_abab + res3_abba
+
+    # res2b = deepcopy(res)
+    # res3_ababb = add_spin_driver(spin_dict1b, numf1, res)
+    # rsimp = res3_ababb
+#    res3_abbab = add_spin_driver(spin_dict2b, numf1, res2)
+ #   rsimp = res3_ababb + res3_abbab
+    
     # res3_abba = add_spin_driver(spin_dict2, numf1, res)
     # rsimp = res3_abba
     # res3_abab = res3_abba
@@ -2301,12 +2329,13 @@ def pp_rpa():
     # rsimp = res3_abab + res3_abba
     
     
-    # res3_aaaa = add_spin_driver(spin_dict3, numf1, res)
+    res3_aaaa = add_spin_driver(spin_dict3, numf1, res)
     # res3_bbbb = add_spin_driver(spin_dict4, numf1, res)
     # res3_abab = res3_aaaa + res3_bbbb
+    # rsimp = res3_abab
 
     # res3_aaaa = add_spin_driver(spin_dict3, numf1, res)
-    # rsimp = res3_aaaa
+    rsimp = res3_aaaa
 
 
     # res3_bbbb = add_spin_driver(spin_dict4, numf1, res)
@@ -2328,14 +2357,14 @@ def pp_rpa():
     #     print(x)
 
     #    sys.exit(0)
-    rgam_abab = simplify_for_mult_2(rsimp)
+    rgam_abab = simplify_for_mult_2(rsimp, diagonal)
 #    sys.exit(0)
     # rgam_abba = simplify_for_mult_2(res3_abba)
 
     # rgam = rgam_abab + rgam_abba
     # rsimp = simplify(rgam, cas=True)
     rsimp = rgam_abab
-    rsimp = rename_gm1(rsimp)
+#    rsimp = rename_gm1(rsimp)
     # rgam_abab = rename_gm1(rgam_abab)
     print('po simp and rename gamma')
     # for x in rgam_abab:
@@ -5131,7 +5160,7 @@ def split_element(elem1):
 
     return new_elements    
     
-def ph_rpa(cis = False):
+def ph_rpa(cis = False, spinres = False):
     
     # -------------------------------------------------------------------------------------------------------
     # W scislym przypadku <0|[[dO, H],O+]|0> = <0|[dO,[H,O+]]|0>
@@ -5169,11 +5198,16 @@ def ph_rpa(cis = False):
     # this is main code *********************************
     #
     if cis == False:
-#        KL = evaluate(h1cas, AAqp, AArs).scale(-1.0) +  evaluate(h2cas, AAqp, AArs).scale(-1.0)
-        LK = evaluate(h1cas, AApq, AArs).scale(1.0) +  evaluate(h2cas, AApq, AArs).scale(1.0)
+        if spinres == False:
+            KL = evaluate(h1cas, AAqp, AArs).scale(-1.0) +  evaluate(h2cas, AAqp, AArs).scale(-1.0)
+            LK = evaluate(h1cas, AApq, AArs).scale(1.0) +  evaluate(h2cas, AApq, AArs).scale(1.0)
+        else:
+            KL = evaluate(h1cas, AAqp, AArs).scale(-1.0) +  evaluate(h2cassr, AAqp, AArs).scale(-1.0)
+            #KL = evaluate(h1cas, AApq, AArs).scale(-1.0) +  evaluate(h2cassr, AApq, AArs).scale(-1.0)
+            LK = evaluate(h1cas, AApq, AArs).scale(1.0) +  evaluate(h2cassr, AApq, AArs).scale(1.0)
         
-        KL = evaluate(AArs, h1cas, AApq).scale(0.5) +  evaluate(AArs, h2cas, AApq).scale(0.5) +\
-            evaluate(h1cas, AApq, AArs).scale(-0.5) +  evaluate(h2cas, AApq, AArs).scale(-0.5)
+        # KL = evaluate(AArs, h1cas, AApq).scale(0.5) +  evaluate(AArs, h2cas, AApq).scale(0.5) +\
+        #     evaluate(h1cas, AApq, AArs).scale(-0.5) +  evaluate(h2cas, AApq, AArs).scale(-0.5)
 
         # LK = evaluate(AApq, h1cas, AArs).scale(-0.5) +  evaluate(AApq, h2cas, AArs).scale(-0.5) +\
         #     evaluate(h1cas, AArs, AApq).scale(0.5) +  evaluate(h2cas, AArs, AApq).scale(0.5)
@@ -5269,11 +5303,11 @@ def ph_rpa(cis = False):
         if (x.num_factor) != 0.0:
            print(x)
 
-    print('Result po WICK:')    
-    for x in resLK:
-        x.exec_delta()
-        if (x.num_factor) != 0.0:
-           print(x)
+    # print('Result po WICK:')    
+    # for x in resLK:
+    #     x.exec_delta()
+    #     if (x.num_factor) != 0.0:
+    #        print(x)
 
     print()
     print('Result po RENAME DENSITY:')
@@ -5285,46 +5319,52 @@ def ph_rpa(cis = False):
         if (x.num_factor) != 0.0:
 
             print(x)
-    for x in resLK:
-        x.rename_as_density()
-        if (x.num_factor) != 0.0:
+    # for x in resLK:
+    #     x.rename_as_density()
+    #     if (x.num_factor) != 0.0:
 
-            print(x)
+    #         print(x)
 
     print('')
 
     #---------------------------
+    res = dirac_to_coulomb(res)
     res2 = cas_to_ugg(res)
-    res2LK = cas_to_ugg(resLK)
+#    res2LK = cas_to_ugg(resLK)
 
     rsimp = simplify(res2, cas=True)
-    rsimpLK = simplify(res2LK, cas=True)
+#    rsimpLK = simplify(res2LK, cas=True)
     k = 0
     print('po simp')
+    sniez = arithmetic_string()
     for x in rsimp:
-       k += 1
-
-       print(x)
+        print(k, x)
+        if (k==7):# or k ==7):
+            sniez = sniez + arithmetic_string(x)
+        k += 1
     print()
-
-    print('po simp LK')
-    for x in rsimpLK:
-       k += 1
-       print(x)
     print()
+    # for x in sniez:
+    #     print(x)
+    # rsimp = sniez
+    # print('po simp LK')
+    # for x in rsimpLK:
+    #    k += 1
+    #    print(x)
+    # print()
 
-    klkl =rsimp + rsimpLK
-    rs = simplify(klkl, cas=True)
+    # klkl =rsimp + rsimpLK
+    # rs = simplify(klkl, cas=True)
 
-    print('po simp klkl')
-    for x in rs:
-       k += 1
+    # print('po simp klkl')
+    # for x in rs:
+    #    k += 1
 
-       print(x)
+    #    print(x)
     print()
 
     
-    sys.exit(0)
+#    sys.exit(0)
 #----------------------------ten kod znajdzie calki antysym---------------
     # rsimpa = find_antysym_int(rsimp)
     # k = 0
@@ -5361,8 +5401,9 @@ def ph_rpa(cis = False):
     res3_aabb = add_spin_driver(spin_dict2, numf2, rsimp2)
 
     res3 = res3_aaaa + res3_aabb
+    
     print('')
-    print('last result po spin')
+    print('last result po spin -sniezph1')
     k = 0
     res3.cleanup()
     for x in res3:
@@ -5374,13 +5415,13 @@ def ph_rpa(cis = False):
     # print('last result po spin')
     # for x in res3_aabb:
     #     print(x)
-
+    print('sniezph2')
     if cis == False:
-        rgams = simplify_for_mult_2(res3)
+        rgams = simplify_for_mult_2(res3, diagonal=False, spinres=spinres)
     elif cis == True:
         rgams = simplify_for_mult_234(res3)
 
-    
+    print('sniezph3')
 
     print()
     print('po simp and rename gamma', len(rgams))
@@ -5390,15 +5431,16 @@ def ph_rpa(cis = False):
         print(x)
     print()
 
-    rgams = simplify_final_touch(rgams)
-    print()
-    print('po final touch', len(rgams))
-    print()
-    print(type(rgams))
-    for x in rgams:
-        print(x, x.coefficient)
-    print()
-
+    # rgams = simplify_final_touch(rgams)
+    # print()
+    # print('po final touch', len(rgams))
+    # print()
+    # print(type(rgams))
+    # for x in rgams:
+    #     print(x)
+    #     #print(x, x.coefficient)
+    # print()
+    sys.exit(0)
     rgam_original = add_spin_to_gamma(rgams)
     
     print('len rgam_original', len(rgam_original))
@@ -6048,9 +6090,9 @@ def pp_rpa_hf_det():
     sys.exit(0)
 
 
-def simplify_for_mult_2(res3):
+def simplify_for_mult_2(res3, diagonal=True, spinres=False):
 
-    res5 = simplify_1rdm_mult(res3)
+    res5 = simplify_1rdm_mult(res3, diagonal)
     print('')
     print('')
     print('po simp rdm1', len(res5))
@@ -6059,15 +6101,21 @@ def simplify_for_mult_2(res3):
         print(k, x)
         k += 1
 
-    res5a = simplify_2rdm_mult_act(res5)
+    res5a = simplify_2rdm_mult_act(res3)
     print('')
     print('')
     print('po simp rdm2', len(res5a))
     for x in res5a:
         if x.num_factor !=0:
             print(x)
-#    sys.exit(0)
-    res6 = remove_spin(res5a)
+
+    if spinres:
+        print('rename spinres')
+        res6a = rename_spin_resolved_ints_dirac(res5a)
+        res7a = rename_spin_resolved_ints_coulomb(res6a)
+        res6 = remove_spin(res7a)
+    else:
+        res6 = remove_spin(res5a)
     print('')
     print('')
     print('po remove spin', len(res6))
@@ -6083,9 +6131,16 @@ def simplify_for_mult_2(res3):
 #    sys.exit(0)
     
     rsimp = simplify(res2, cas=True)
+    print('po simp')
+    for x in rsimp:
+        x.exec_delta(general_cond=True)
+        k += 1
+        # print("&", x, "\\\\")
+        print(x)
+
     rsimp = dirac_to_coulomb(rsimp)
     k = 0
-    print('po simp')
+    print('po dirac to coulomb')
     for x in rsimp:
         x.exec_delta(general_cond=True)
         k += 1
@@ -6314,8 +6369,10 @@ def add_spin_driver(spin_dict, numf, rsimp, onedet = False):
 
     start = time.time()
     if onedet:
+        print('simp spin onedet')
         res4 = simplify_spin_onedet(res3a)
     else:
+        print('simply spin regular')
         res4 = simplify_spin(res3a)
     end = time.time()
     print('simpl spin time', end - start)
@@ -6326,7 +6383,7 @@ def add_spin_driver(spin_dict, numf, rsimp, onedet = False):
     for x in res4:
         if (x.num_factor) != 0.0:
             print(x)
-
+    print()
 #    sys.exit(0)
     return res4
 

@@ -2241,6 +2241,15 @@ h2cas.operator_idx = ['t', 'u', 'v', 'w']
 h2cas.operator_type = ['+', '+', '0', '0']
 h2cas.num_factor = 0.5
 
+# spin respolved
+h2cassr = cas()
+h2cassr.summation = ['t', 'u', 'v', 'w']
+h2cassr.coefficient = [TWOEL_INT_DIRAC_SPINRES]
+h2cassr.coefficient_idx.append(['t', 'u', 'w', 'v'])
+h2cassr.operator_idx = ['t', 'u', 'v', 'w']
+h2cassr.operator_type = ['+', '+', '0', '0']
+h2cassr.num_factor = 0.5
+
 
 AApq_pp = cas()
 AApq_pp.operator_idx = ['p', 'q']

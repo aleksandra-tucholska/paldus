@@ -32,6 +32,7 @@ class cas:
         self.delta = []
         self.delta_spin = []
         self.coefficient_rep = []
+        self.operator_stat = []
 
     def __str__(self):
 
@@ -885,7 +886,7 @@ def add_spin_summ(res):
     res2 = arithmetic_string()
     for i in range(0, len(res)):
         elem = res[i]
-        # print('elem000', elem)
+        print('elem000', elem)
         if len(elem.summation)==0:
             res2.append(elem)
             # res2 = res2 + arithmetic_string(elem)            
@@ -896,9 +897,10 @@ def add_spin_summ(res):
             result = add_spin_summ_basic(elem, elem.summation)
             for x in result:
                 res2.append(x)
+                print('x', x)
                 # res2 = res2 + add_spin_summ_basic(elem, elem.summation)
                 # print('')
-                # for f in res3:
+                # for f in res:
                 #     print('ppp', f)
     return res2
 
@@ -990,18 +992,20 @@ def gam2_spin_type(lst):
 def add_spin_summ_basic(elem, sumi):
 
     ll = len(sumi)
-
+    print('elem0', elem)
     elem2 = elem.copy()
     for a in range(0, len(elem.coefficient_idx)):
         for b in range(0, len(elem.coefficient_idx[a])):
             if sumi[-1] == elem.coefficient_idx[a][b]:
                 elem.coefficient_spin[a][b] = '+'
-                print('elem', elem)
+                #print('elem', elem)
                 elem2.coefficient_spin[a][b] = '-'
-                print('elem', elem)
-                print('elem2', elem2)
-                print('------------------------------------------------------------------------------')
-
+                #print('elem', elem)
+                #print('elem2', elem2)
+                #print('------------------------------------------------------------------------------')
+    print('elem1', elem)
+    print('elem2', elem2)
+    print('------------------------------------------------------------------------------')
     if len(sumi[0:ll-1])==0:
         result = arithmetic_string(elem, elem2)
         return result
@@ -1102,7 +1106,7 @@ def simplify_spin(res):
     for x in range(0, len(res)):
 
         elem = res[x]
-        #print('elem przed', elem)
+#        print('elem przed', elem)
 
 #        print('sspin przed', elem)
         # find delta = 0
@@ -1122,11 +1126,17 @@ def simplify_spin(res):
                     if coef_spin[0] != '0' and coef_spin[1] != '0':
                         # print('z powodu DENS1')
                         elem.num_factor = 0
-            if coef == TWOEL_INT_DIRAC:
+            if coef == TWOEL_INT_DIRAC or coef == TWOEL_INT_DIRAC_SPINRES:
                 if coef_spin[0] != coef_spin[2]:
                     elem.num_factor = 0
                 if coef_spin[1] != coef_spin[3]:
                     elem.num_factor = 0
+            if coef == TWOEL_INT or coef == TWOEL_INT_SPINRES:
+                if coef_spin[0] != coef_spin[1]:
+                    elem.num_factor = 0
+                if coef_spin[2] != coef_spin[3]:
+                    elem.num_factor = 0
+
             if coef == DENS2:
                 # print('sss', coef_spin)
                 # +--+
@@ -1268,7 +1278,7 @@ def simplify_2rdm_occ(res):
 
 # def simplify_34rdm(res):
 
-def simplify_1rdm_mult(res):
+def simplify_1rdm_mult(res, diagonal=True):
 
     res2 = arithmetic_string()
     for x in range(0, len(res)):
@@ -1283,7 +1293,8 @@ def simplify_1rdm_mult(res):
                 coef_spin = deepcopy(elem.coefficient_spin[x])
                 if coef == DENS1:
                     if coef_idx[0]!=coef_idx[1]:
-                        elem.delta.append([coef_idx[0], coef_idx[1]])
+                        if diagonal:
+                            elem.delta.append([coef_idx[0], coef_idx[1]])
                         elem.delta_spin.append([coef_spin[0], coef_spin[1]])
                         if coef_spin[0] != coef_spin[1]:
                             elem.num_factor = 0.0
@@ -1699,8 +1710,127 @@ def dirac_to_coulomb(res):
                 new_coef_idx.append(coef_idx[3])
                 elem.coefficient_idx[x] = new_coef_idx
                 elem.coefficient[x] = TWOEL_INT
+            if coef == TWOEL_INT_DIRAC_SPINRES: 
+                new_coef_idx = []
+                new_coef_idx.append(coef_idx[0])
+                new_coef_idx.append(coef_idx[2])
+                new_coef_idx.append(coef_idx[1])
+                new_coef_idx.append(coef_idx[3])
+                elem.coefficient_idx[x] = new_coef_idx
+                elem.coefficient[x] = TWOEL_INT_SPINRES
                 # print('elempo', elem)
         res2 = res2 + arithmetic_string(elem)
+
+    return res2
+
+def dirac_to_coulomb_spinres(res):
+
+    res2 = arithmetic_string()
+    for x in range(0, len(res)):
+        elem = res[x]
+
+        for x in range(0, len(elem.coefficient)):
+            coef = deepcopy(elem.coefficient[x])
+            coef_idx = deepcopy(elem.coefficient_idx[x])            
+            if coef == TWOEL_INT_DIRAC_SPINRES_AAAA: 
+                new_coef_idx = []
+                new_coef_idx.append(coef_idx[0])
+                new_coef_idx.append(coef_idx[2])
+                new_coef_idx.append(coef_idx[1])
+                new_coef_idx.append(coef_idx[3])
+                elem.coefficient_idx[x] = new_coef_idx
+                elem.coefficient[x] = TWOEL_INT_SPINRES_AAAA
+
+            if coef == TWOEL_INT_DIRAC_SPINRES_BBBB: 
+                new_coef_idx = []
+                new_coef_idx.append(coef_idx[0])
+                new_coef_idx.append(coef_idx[2])
+                new_coef_idx.append(coef_idx[1])
+                new_coef_idx.append(coef_idx[3])
+                elem.coefficient_idx[x] = new_coef_idx
+                elem.coefficient[x] = TWOEL_INT_SPINRES_BBBB
+            if coef == TWOEL_INT_DIRAC_SPINRES_ABABA: 
+                new_coef_idx = []
+                new_coef_idx.append(coef_idx[0])
+                new_coef_idx.append(coef_idx[2])
+                new_coef_idx.append(coef_idx[1])
+                new_coef_idx.append(coef_idx[3])
+                elem.coefficient_idx[x] = new_coef_idx
+                elem.coefficient[x] = TWOEL_INT_SPINRES_ABAB
+
+                # print('elempo', elem)
+        res2 = res2 + arithmetic_string(elem)
+
+    return res2
+
+def rename_spin_resolved_ints_dirac(res):
+#    print('')
+
+
+    res2 = arithmetic_string()
+    for x in range(0, len(res)):
+        elem = res[x]
+        if TWOEL_INT_DIRAC_SPINRES not in elem.coefficient:
+            res2 = res2 + arithmetic_string(elem)
+        else:
+            for x in range(0, len(elem.coefficient)):
+                coef = deepcopy(elem.coefficient[x])
+                coef_idx = deepcopy(elem.coefficient_idx[x])
+                coef_spin = deepcopy(elem.coefficient_spin[x])
+
+                if coef == TWOEL_INT_DIRAC_SPINRES:
+                    print('calka przed', elem, TWOEL_INT_DIRAC_SPINRES, coef)
+                    if coef_spin[0]==coef_spin[1] and \
+                       coef_spin[1]==coef_spin[2] and \
+                       coef_spin[2]==coef_spin[3]:
+                        if coef_spin[0] == '+':
+                            elem.coefficient[x] = TWOEL_INT_DIRAC_SPINRES_AAAA
+                            res2 = res2 + arithmetic_string(elem)
+                        elif coef_spin[0] == '-':
+                            elem.coefficient[x] = TWOEL_INT_DIRAC_SPINRES_BBBB
+                            res2 = res2 + arithmetic_string(elem)
+
+                    if coef_spin[0]==coef_spin[2] and \
+                       coef_spin[0]!=coef_spin[1] and \
+                       coef_spin[1]==coef_spin[3]:
+                        elem.coefficient[x] = TWOEL_INT_DIRAC_SPINRES_ABAB
+                        res2 = res2 + arithmetic_string(elem)
+                    print('calka po', elem)
+
+
+    return res2
+
+def rename_spin_resolved_ints_coulomb(res):
+#    print('')
+
+
+    res2 = arithmetic_string()
+    for x in range(0, len(res)):
+        elem = res[x]
+        if TWOEL_INT_SPINRES not in elem.coefficient:
+            res2 = res2 + arithmetic_string(elem)
+        else:
+            for x in range(0, len(elem.coefficient)):
+                coef = deepcopy(elem.coefficient[x])
+                coef_idx = deepcopy(elem.coefficient_idx[x])
+                coef_spin = deepcopy(elem.coefficient_spin[x])
+                if coef == TWOEL_INT_SPINRES:
+                    if coef_spin[0]==coef_spin[1] and \
+                       coef_spin[1]==coef_spin[2] and \
+                       coef_spin[2]==coef_spin[3]:
+                        if coef_spin[0] == '+':
+                            elem.coefficient[x] = TWOEL_INT_SPINRES_AAAA
+                            res2 = res2 + arithmetic_string(elem)
+                        elif coef_spin[0] == '-':
+                            elem.coefficient[x] = TWOEL_INT_SPINRES_BBBB
+                            res2 = res2 + arithmetic_string(elem)
+
+                    if coef_spin[0]==coef_spin[1] and \
+                       coef_spin[0]!=coef_spin[2] and \
+                       coef_spin[2]==coef_spin[3]:
+                        elem.coefficient[x] = TWOEL_INT_SPINRES_ABAB
+                        res2 = res2 + arithmetic_string(elem)
+
 
     return res2
 

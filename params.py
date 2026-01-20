@@ -297,6 +297,14 @@ EOM_CC_AMPLITUDE_L    = "l"
 S_AMPLITUDE           = "s"
 TWOEL_INT             = "vv"
 TWOEL_INT_DIRAC       = "gs"
+TWOEL_INT_DIRAC_SPINRES       = "gssr"
+TWOEL_INT_DIRAC_SPINRES_AAAA       = "gspp"
+TWOEL_INT_DIRAC_SPINRES_BBBB       = "gsmm"
+TWOEL_INT_DIRAC_SPINRES_ABAB       = "gspm"
+TWOEL_INT_SPINRES                  = "vvsr"
+TWOEL_INT_SPINRES_AAAA             = "vvpp"
+TWOEL_INT_SPINRES_BBBB             = "vvmm"
+TWOEL_INT_SPINRES_ABAB             = "vvpm"
 TWOEL_INT_DIRAC_A       = "gsa"
 TWOEL_INT_COMBO       = "L"
 TWOEL_INT_COMBO2      = "LL"
@@ -338,7 +346,8 @@ CL3                     = "CL3"
 
 CL3PM                   = "CL2pm"
 CL3PP                   = "CL2pp"
-
+ferm = 'F'
+boso = 'B'
 
 
 DENS3PM                 = "Gm3pm"

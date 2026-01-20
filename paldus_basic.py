@@ -553,7 +553,8 @@ def simplify(result, no_fx=None, last_idx='', fixed_fx = [], cas=False, drag_fix
     return result
 
 def simple_swap_count(lista):
-
+    print()
+    print('lista', lista)
     liczba_swapow = 0
     for i in range(len(lista)):
         for j in range(i + 1, len(lista)):
@@ -588,6 +589,7 @@ def simplify_final_touch(res):
             new_elem.orbital_type = {maps.get(k, k): maps.get(v, v) for k, v in new_elem.orbital_type.items()}
 #            new_elem.orbital_type = [maps.get(element, element) for element in l]
             print(new_elem.coefficient)
+            print('new elem?', new_elem)
             new_elem.standarize_g()
             new_elem.standarize_v()
             new_elem.standarize_gs()
@@ -2691,9 +2693,11 @@ def commute_cas(e1, e2):
 def basic_commute_cas2(e1, e2):
 
 
-
+    print('basic commute')
     print('e1', e1)
+    print()
     print('e2', e2)
+    print()
 
         
     l1 = cas()
@@ -2712,19 +2716,21 @@ def basic_commute_cas2(e1, e2):
     for x in e1.operator_type:
         l2.operator_type.append(x)
 
-    print('la', l1.operator_idx)
-    print('la',l1.operator_type)
-    print('la',l2.operator_idx)
-    print('la',l2.operator_type)
+    print('l1 to =', l1)
+    print('l2 to =', l2)
+#    print('la', l1.operator_idx)
+#    print('la',l1.operator_type)
+#    print('la',l2.operator_idx)
+#    print('la',l2.operator_type)
 
     l1 = [l1]
     l2 = [l2]
     # l1.operator_type = deepcopy(e1.operator_type) +deepcopy(e2.operator_type)
     # l1.operator_idx = deepcopy(e2.operator_idx) + deepcopy(e1.operator_idx)
     # l1.operator_type = deepcopy(e2.operator_type) +deepcopy(e1.operator_type)
-    print('l1 i l2', l1)
-    print('l2', l2)
-    print('')
+#    print('l1 i l2', l1[0])
+#    print('l2', l2)
+#    print('')
 
     resmin1 = []
     for x in l1:
@@ -2743,8 +2749,9 @@ def basic_commute_cas2(e1, e2):
     print('')
     print('Result l2:')    
     for x in resmin2:
+        print(x.num_factor)
         x.num_factor *= -1.0
-        print(x)
+        print(x.num_factor)
     print('')
 
     print('---------------------')
