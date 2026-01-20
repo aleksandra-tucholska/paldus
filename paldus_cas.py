@@ -418,7 +418,7 @@ class cas:
 
         res = cas()
         res.summation       = deepcopy(self.summation) + deepcopy(e.summation)
-        res.coefficient     = deepcopy(self.coefficient) + deepcopy(e.coefficient)
+        res.coefficient     = deepcopy(e.coefficient) + deepcopy(e.coefficient)
         res.coefficient_idx = deepcopy(self.coefficient_idx) + deepcopy(e.coefficient_idx)
         res.operator_idx    = deepcopy(self.operator_idx) + deepcopy(e.operator_idx)
         res.coefficient_spin    = deepcopy(self.coefficient_spin) + deepcopy(e.coefficient_spin)
@@ -526,13 +526,22 @@ class cas:
                         num = num - 1 # Bosons don't contribute to sign change
 #                print('numnum', num)
 
-                # Check if current contraction pair are fermions.
-                # If they are bosons, moving them together does not introduce a sign change.
-                # If statistics are not provided, assume fermions.
+                # Check if current contraction pair involves bosons.
+                # Usually contraction is only non-zero for same statistics.
+                # If either is boson, sign change logic might be different if we crossed them?
+                # Actually, crossing a boson never changes sign. Crossing a fermion changes sign if crossing another fermion.
+                # The loop above counts how many active operators are crossed.
+                # If we cross a boson, we decremented num so it doesn't flip sign.
+                # BUT, we also need to check if the operators *being contracted* affect sign?
+                # No, contraction itself is a scalar replacement. The sign comes from moving them adjacent.
+                # If both contracted ops are bosons, moving them doesn't generate sign.
+                # If both are fermions, moving them generates sign based on how many fermions they cross.
+                # My logic above: `num` counts crossed operators. If I subtract 1 for every boson crossed,
+                # then `num` counts only fermions crossed.
+                # Note: if operator_stat is empty, we assume fermions, so condition is false, num stays same.
 
                 is_fermion_pair = True
                 if self.operator_stat:
-                     # Assumes matching statistics as checked in remove_null_contractions
                      if self.operator_stat[list_of_c[i][0]] == boso:
                          is_fermion_pair = False
 

@@ -12,7 +12,10 @@ The `wick_ca` subroutine and associated helper methods in `paldus_cas.py` have b
 2.  **`contraction` Method**:
     - Updated to account for particle statistics when determining the sign of the contraction term.
     - Previously, the method calculated `num` (the number of operators crossed by the contracted pair) and applied a sign change if `num` was odd. This implicitly assumed all operators were fermions.
-    - **New Logic**: The method now iterates through the operators between the contracted pair. It decrements the count `num` if the crossed operator is a boson (`boso`). This ensures that only crossings of fermions contribute to the sign change (fermionic parity).
+    - **New Logic**:
+        - It first checks the statistics of the **contracted pair**.
+        - If the contracted pair involves **bosons**, they commute with all other operators, so no sign change is applied (phase factor remains +1).
+        - If the contracted pair involves **fermions**, the sign change logic is applied. The method iterates through the operators *between* the contracted pair. It decrements the count `num` if the crossed operator is a boson (`boso`). This ensures that only crossings of fermions contribute to the sign change (fermionic parity).
 
 3.  **`normal_order` Method**:
     - This method reorders operators (creators to the left, annihilators to the right) and sorts them by index. It calculates the sign change based on the number of swaps required.
@@ -40,7 +43,9 @@ The `wick_ca` subroutine and associated helper methods in `paldus_cas.py` have b
 The following specific locations in the integration/Wick subroutines apply fermionic rules and have been updated:
 
 1.  **`paldus_cas.py: contraction`**:
-    - The loop checking `range(list_of_c[i][0]+1, list_of_c[i][1])` now checks `self.operator_stat[j] == boso` to skip sign changes for bosons.
+    - Added a check: `is_fermion_pair` is false if contracted operator is `boso`.
+    - The loop checking crossings skips counting bosons: `elif self.operator_stat and self.operator_stat[j] == boso: num = num - 1`.
+    - Sign flip only applied if `is_fermion_pair` is true.
 
 2.  **`paldus_cas.py: normal_order`**:
     - Calls `swap_count_stats` (new) instead of `swap_count` to handle reordering of creators and annihilators amongst themselves.
@@ -54,6 +59,8 @@ The following specific locations in the integration/Wick subroutines apply fermi
 A test script `test_mixed_stats.py` was created to verify the changes:
 - **Pure Fermions**: Behaves as before (anticommutation relations applied).
 - **Pure Bosons**: Validated that swapping operators does not introduce a sign change ($[b_i, b_j^\dagger] = \delta_{ij}$).
-- **Mixed Systems**: Validated that fermions and bosons commute with each other without sign changes.
+- **Mixed Systems**:
+    - Validated that fermions and bosons commute with each other without sign changes.
+    - Validated that contracting two bosons separated by a fermion yields a positive sign (no sign flip from crossing the fermion).
 
 The implementation correctly defaults to fermionic behavior if `operator_stat` is empty, preserving backward compatibility.
