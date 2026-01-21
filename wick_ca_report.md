@@ -97,10 +97,10 @@ The variable `KL` is a list containing the following 4 terms (representing the d
 ### Step 2.3: Loop and Final `wick_ca` Call
 
 ```python
-res = [] 
-for x in KL: 
-    result_list = x.wick_ca() 
-    res = res + result_list 
+res = []
+for x in KL:
+    result_list = x.wick_ca()
+    res = res + result_list
 ```
 
 The code iterates over each term in `KL`. Each `x` is a `cas` object representing a one-body operator (e.g., $t^\dagger s$).
