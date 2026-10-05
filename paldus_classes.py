@@ -3654,8 +3654,6 @@ class ugg:
 
         s_old = deepcopy(summation_old)
         self.multisubst(summation_old, summation_new)
-        print('summation_old', summation_old)
-        print('summation_new', summation_new)
 
 
         temp_values = {}
