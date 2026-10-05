@@ -224,11 +224,11 @@ EPSILON = 10**(-14)
 # for x in r:
 #     print(x)
 # sys.exit(0)     
-ph_rpa_plus_doubles('dump', cis='ph')
+#ph_rpa_plus_doubles('dump', cis='ph')
 #ph_rpa_plus_doubles('dump2')
 #ph_rpa_plus_doubles('load')
 #ph_rpa_plus_doubles_overlap()
-#ph_rpa(cis = False)
+ph_rpa(cis = False)
 
 # test_rpa()
 sys.exit(0)
